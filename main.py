@@ -12,9 +12,11 @@ class Application:
         tabControl = ttk.Notebook(window)
         tab1 = ttk.Frame(tabControl)
         tab2 = ttk.Frame(tabControl)
+        tab3 = ttk.Frame(tabControl)
 
         tabControl.add(tab1, text='Parejas')
-        tabControl.add(tab2, text='Duplicados')
+        tabControl.add(tab2, text='Gemelos')
+        tabControl.add(tab3, text='Gemelos Únicos')
         tabControl.pack(expand=1, fill="both")
 
         # Title Label
@@ -61,8 +63,29 @@ class Application:
         self.copyTwins = Button(tab2, text='Copiar Resultado', command=self.copyTwins)
         self.copyTwins.grid(column=2, row=3, pady=10)
 
+        # Title Label
+        ttk.Label(tab3,
+                  text="Introduce las palabras en el bloque izquierdo, una por línea, sin separar por comas ni ningún símbolo y luego pulsa el botón 'Crear Gemelos Únicos'",
+                  background='green', foreground="white").grid(column=1, row=1, columnspan=3, pady=10)
+
+        # Words Textarea Unique Twins
+        self.text_areaUniqueTwins = scrolledtext.ScrolledText(tab3, wrap=tk.WORD, width=40, height=30)
+        self.text_areaUniqueTwins.grid(column=1, padx=10, pady=10, row=2, rowspan=2)
+        self.text_areaUniqueTwins.focus()
+
+        # Unique twins Textarea result
+        self.text_area_resultUniqueTwins = scrolledtext.ScrolledText(tab3, wrap=tk.WORD, width=40, height=30, state='disabled')
+        self.text_area_resultUniqueTwins.grid(column=3, padx=25, row=2, rowspan=2)
+
+        # Submit Unique Twins Button
+        self.submitUniqueTwins = Button(tab3, text='Crear gemelos únicos', command=self.executeUniqueTwins)
+        self.submitUniqueTwins.grid(column=2, row=2, pady=10)
+
+        # Copy Button Twins
+        self.copyUniqueTwins = Button(tab3, text='Copiar Resultado', command=self.copyUniqueTwins)
+        self.copyUniqueTwins.grid(column=2, row=3, pady=10)
+
         tabControl.bind("<1>", self.clearTextAreas())
-        # tab2.bind("<<NotebookTabChanged>>", self.clearTextAreas())
 
         window.mainloop()
 
@@ -86,6 +109,16 @@ class Application:
         self.text_area_resultTwins.insert("insert", twins)
         self.text_area_resultTwins.config(state="disabled")
 
+    def executeUniqueTwins(self):
+        words = self.text_areaUniqueTwins.get("1.0", "end")
+        wordsArray = list(filter(None, words.splitlines()))
+        uniqueTwins = self.generateUniqueTwins(wordsArray)
+
+        self.text_area_resultUniqueTwins.config(state="normal")
+        self.text_area_resultUniqueTwins.delete('1.0', "end")
+        self.text_area_resultUniqueTwins.insert("insert", uniqueTwins)
+        self.text_area_resultUniqueTwins.config(state="disabled")
+
 
     def generatePairs(self, array):
         alreadyProcessed = []
@@ -107,10 +140,25 @@ class Application:
             result += first+":"+first+"\r\n"
         return result
 
+
+    def generateUniqueTwins(self, array):
+        result = ""
+        loaded = []
+        for first in array:
+            if first in loaded:
+                continue
+            result += first+":"+first+"\r\n"
+            loaded.append(first)
+        return result
+
     def clearTextAreas(self):
         self.text_area_resultTwins.config(state="normal")
         self.text_area_resultTwins.delete('1.0', "end")
         self.text_area_resultTwins.config(state="disabled")
+        self.text_areaTwins.delete('1.0', "end")
+        self.text_area_resultUniqueTwins.config(state="normal")
+        self.text_area_resultUniqueTwins.delete('1.0', "end")
+        self.text_area_resultUniqueTwins.config(state="disabled")
         self.text_areaTwins.delete('1.0', "end")
         self.text_area_resultPairs.config(state="normal")
         self.text_area_resultPairs.delete('1.0', "end")
@@ -129,6 +177,13 @@ class Application:
         clip.withdraw()
         clip.clipboard_clear()
         clip.clipboard_append(self.text_area_resultTwins.get("1.0", "end"))
+        clip.destroy()
+
+    def copyUniqueTwins(self):
+        clip = tk.Tk()
+        clip.withdraw()
+        clip.clipboard_clear()
+        clip.clipboard_append(self.text_area_resultUniqueTwins.get("1.0", "end"))
         clip.destroy()
 
 if __name__ == "__main__":
