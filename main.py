@@ -19,6 +19,14 @@ class Application:
         tabControl.add(tab3, text='Gemelos Únicos')
         tabControl.pack(expand=1, fill="both")
 
+        self.pairs(tab1)
+        self.twins(tab2)
+        self.uniqueTwins(tab3)
+
+        tabControl.bind("<1>", self.clearTextAreas())
+        window.mainloop()
+
+    def pairs(self, tab1):
         # Title Label
         ttk.Label(tab1,
                   text="Introduce las palabras en el bloque izquierdo, una por línea, sin separar por comas ni ningún símbolo y luego pulsa el botón 'Crear Parejas'",
@@ -30,7 +38,8 @@ class Application:
         self.text_areaPairs.focus()
 
         # Pairs Textarea result
-        self.text_area_resultPairs = scrolledtext.ScrolledText(tab1, wrap=tk.WORD, width=40, height=30, state='disabled')
+        self.text_area_resultPairs = scrolledtext.ScrolledText(tab1, wrap=tk.WORD, width=40, height=30,
+                                                               state='disabled')
         self.text_area_resultPairs.grid(column=3, padx=25, row=2, rowspan=2)
 
         # Submit Button
@@ -41,6 +50,7 @@ class Application:
         self.copyPairs = Button(tab1, text='Copiar Resultado', command=self.copyPairs)
         self.copyPairs.grid(column=2, row=3, pady=10)
 
+    def twins(self, tab2):
         # Title Label
         ttk.Label(tab2,
                   text="Introduce las palabras en el bloque izquierdo, una por línea, sin separar por comas ni ningún símbolo y luego pulsa el botón 'Crear Gemelos'",
@@ -52,7 +62,8 @@ class Application:
         self.text_areaTwins.focus()
 
         # Pairs Textarea result
-        self.text_area_resultTwins = scrolledtext.ScrolledText(tab2, wrap=tk.WORD, width=40, height=30, state='disabled')
+        self.text_area_resultTwins = scrolledtext.ScrolledText(tab2, wrap=tk.WORD, width=40, height=30,
+                                                               state='disabled')
         self.text_area_resultTwins.grid(column=3, padx=25, row=2, rowspan=2)
 
         # Submit Button
@@ -63,6 +74,7 @@ class Application:
         self.copyTwins = Button(tab2, text='Copiar Resultado', command=self.copyTwins)
         self.copyTwins.grid(column=2, row=3, pady=10)
 
+    def uniqueTwins(self, tab3):
         # Title Label
         ttk.Label(tab3,
                   text="Introduce las palabras en el bloque izquierdo, una por línea, sin separar por comas ni ningún símbolo y luego pulsa el botón 'Crear Gemelos Únicos'",
@@ -74,7 +86,8 @@ class Application:
         self.text_areaUniqueTwins.focus()
 
         # Unique twins Textarea result
-        self.text_area_resultUniqueTwins = scrolledtext.ScrolledText(tab3, wrap=tk.WORD, width=40, height=30, state='disabled')
+        self.text_area_resultUniqueTwins = scrolledtext.ScrolledText(tab3, wrap=tk.WORD, width=40, height=30,
+                                                                     state='disabled')
         self.text_area_resultUniqueTwins.grid(column=3, padx=25, row=2, rowspan=2)
 
         # Submit Unique Twins Button
@@ -84,10 +97,6 @@ class Application:
         # Copy Button Twins
         self.copyUniqueTwins = Button(tab3, text='Copiar Resultado', command=self.copyUniqueTwins)
         self.copyUniqueTwins.grid(column=2, row=3, pady=10)
-
-        tabControl.bind("<1>", self.clearTextAreas())
-
-        window.mainloop()
 
     def executePairs(self):
         words = self.text_areaPairs.get("1.0", "end")
@@ -119,7 +128,6 @@ class Application:
         self.text_area_resultUniqueTwins.insert("insert", uniqueTwins)
         self.text_area_resultUniqueTwins.config(state="disabled")
 
-
     def generatePairs(self, array):
         alreadyProcessed = []
         result = ""
@@ -127,9 +135,9 @@ class Application:
         for first in array:
             for second in array:
                 combination = [first, second]
-                if(first == second):
+                if (first == second):
                     continue
-                result += first+":"+second+"\r\n"
+                result += first + ":" + second + "\r\n"
                 alreadyProcessed.append(combination)
         return result
 
@@ -137,9 +145,8 @@ class Application:
         result = ""
 
         for first in array:
-            result += first+":"+first+"\r\n"
+            result += first + ":" + first + "\r\n"
         return result
-
 
     def generateUniqueTwins(self, array):
         result = ""
@@ -147,7 +154,7 @@ class Application:
         for first in array:
             if first in loaded:
                 continue
-            result += first+":"+first+"\r\n"
+            result += first + ":" + first + "\r\n"
             loaded.append(first)
         return result
 
@@ -185,6 +192,7 @@ class Application:
         clip.clipboard_clear()
         clip.clipboard_append(self.text_area_resultUniqueTwins.get("1.0", "end"))
         clip.destroy()
+
 
 if __name__ == "__main__":
     app = Application()
